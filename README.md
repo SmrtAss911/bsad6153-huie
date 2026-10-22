@@ -1,7 +1,7 @@
 # BSAD 6153 Project: &lt;your project name&gt;
 
-**Student:** &lt;your name&gt;
-**My decision:** &lt;the decision you make regularly that this project improves&gt;
+**Student:** Anthony Huie
+**My decision:** Weekly parts sourcing: for each standard datacenter part on my weekly pick list, whether to buy from my preferred vendor or an alternate distributor, based on price, stock, and lead time (data source: Mouser Search API).
 **Website:** &lt;your domain, from Week 4&gt;
 
 This repository is one complete AI system, built over eight weeks: a real API, synced on a schedule into a
