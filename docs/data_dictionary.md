@@ -64,9 +64,11 @@ Counts are from run 1 (1,655 part records). "Null/empty" means missing, JSON nul
 
 - **Part key:** `MouserPartNumber`. It was unique per part across both runs.
 - **Natural key:** `Manufacturer` + `ManufacturerPartNumber`. This is what my decision compares across distributors.
-  Whether one manufacturer part can map to several Mouser part numbers (for example, packaging variants) is not yet checked. [VERIFY]
-- **Price break key:** `MouserPartNumber` + `Quantity`. **Attribute key:** `MouserPartNumber` + `AttributeName`. I haven't checked
-  whether an attribute name can repeat on one part. [VERIFY]
+  In run 1, each one mapped to exactly one `MouserPartNumber` (0 of 1,456 had more than one). A larger sample could still
+  show packaging variants under separate Mouser part numbers.
+- **Price break key:** `MouserPartNumber` + `Quantity`. **Attributes have no unique key:** `AttributeName` can repeat on one
+  part. In run 1, 2 of 1,456 parts repeat `Packaging` (`584-LT3086IDHD#TRPBF` 3 times, `501-OCTI140505` twice), so a
+  table of attributes needs its own row ID or must keep the order.
 - **Keyword ↔ part:** many-to-many. 137 parts appeared under 2 or more keywords.
 
 ## Update behavior
@@ -87,6 +89,7 @@ Counts are from run 1 (1,655 part records). "Null/empty" means missing, JSON nul
    6: 372 · 7: 172 · 8: 207 · 9: 67. Over half the parts have more than 4.
 2. **"No stock" comes in three forms.** `Availability` is missing on 119 parts and is the literal string `"None"` on 375.
    It's never a JSON null. Code that checks `is None` would miss all of them.
+   In those cases `AvailabilityInStock` is `"0"` (464 of 465 unique parts), so `"None"` means zero stock, not unknown.
 3. **Every number is a string.** Prices are `"$17.12"` with a dollar sign and commas (142 are over $1,000, like `"$9,999.99"`),
    and 50 have three decimals (`"$9.999"`). `Min`, `Mult`, and `AvailabilityInStock` are strings like `"1"`, and lead time is `"17 Days"`.
 4. **Pagination overlaps.** The same part appeared twice within one keyword's pages 12 times, so paging is not a clean partition.
@@ -96,42 +99,61 @@ Counts are from run 1 (1,655 part records). "Null/empty" means missing, JSON nul
    `584-LT3086IDHD#TRPBF`).
 7. **`NumberOfResult` is off by one.** "keystone jack cat6" reported 90 and returned 91; "rack cage nut" reported 63 and returned 64.
 8. **`LifecycleStatus` is null for 971 of 1,655 parts (59%).**
+9. **Some results can't be bought here.** 1 of 1,456 unique parts (`584-LT8697IUDD#PBF`) carries "Mouser does not presently
+   sell this product in your region." It is also one of the 2 parts with no price breaks.
+10. **Tariffs aren't in the price.** 407 of 1,456 unique parts (28%) have a `SurchargeMessages` notice such as "A tariff of 38%
+    may be applied if shipping to the United..." (full text not checked). The rates range from 7% to 120% (most common: 38% on 134 parts,
+    8% on 125, 11% on 64). `PriceBreaks` doesn't include them.
 
 ## Ethics check
 
-Factual notes from the terms only. My judgment goes after each. [VERIFY: match the course's four headings]
+Factual notes only. My judgment goes after each.
 
-### Permission and purpose
-- Mouser §1: the API is for presenting Mouser data in ways that "compliment and enhance" Mouser's own products and services.
-- Mouser §2: Mouser may reject applications whose principal purpose is not "advertising and marketing the Mouser Electronics
-  Content and driving sales of Mouser Electronics products." Your access request had to describe your application.
-- Digi-Key §5.2: Digi-Key data may not be displayed on pages whose principal purpose is not driving sales of Digi-Key products.
-
-[ANTHONY: your answer]
-
-### Storage, caching, and databases
-- Mouser §4: you may not "cache, record, pre-fetch, or otherwise store any portion" of Mouser content, run "bulk download"
-  operations, or use it "to update or create your own database of business listing information."
-- Mouser §5 and §7: on termination, all Mouser data must be deleted.
-- Digi-Key §5.1(e): no using the API or data "to update or create your own database of information." §5.1(d): no bulk download.
-- In this project, raw responses are saved locally in `data/raw/` (gitignored) and only a 3-part sample is committed.
-
-[ANTHONY: your answer]
-
-### Attribution and public display
-- Mouser §5: "You must clearly and conspicuously attribute the source of all Mouser Electronics Data."
-- Mouser §8: materials that reference Mouser, including "screen shots," need Mouser's prior written consent.
-- Digi-Key §3.1.4: "clearly and conspicuously attribute DigiKey as the source of all DigiKey Data." §2: showing Digi-Key data
-  on a downstream website needs prior approval from Digi-Key.
+### Terms of service: storage, display, commercial use, attribution
+- **Storage:** Mouser §4: you may not "cache, record, pre-fetch, or otherwise store any portion" of Mouser content, run "bulk
+  download" operations, or use it "to update or create your own database of business listing information." Mouser §5 and §7:
+  on termination, all Mouser data must be deleted. Digi-Key §5.1(e): no using the data "to update or create your own database
+  of information"; §5.1(d): no bulk download. In this project, raw responses are kept locally in `data/raw/` (gitignored) and only
+  a 3-part sample is committed.
+- **Display:** Mouser §5 licenses display "solely on your Application." Digi-Key §5.2: Digi-Key data may not be displayed on pages
+  whose principal purpose is not driving sales of Digi-Key products; §2: a downstream website needs prior approval.
+- **Commercial use:** Mouser §1: the API is for presenting data in ways that "compliment and enhance" Mouser's own products and
+  services. §2: Mouser may reject applications whose principal purpose is not "advertising and marketing the Mouser Electronics
+  Content and driving sales of Mouser Electronics products." §5: no other use "without Mouser Electronics's prior written
+  consent." §6: no pay-per-click or keyword campaigns without prior written approval.
+- **Attribution:** Mouser §5: "You must clearly and conspicuously attribute the source of all Mouser Electronics Data." Mouser §8:
+  materials that reference Mouser, including "screen shots," need prior written consent. Digi-Key §3.1.4: "clearly and
+  conspicuously attribute DigiKey as the source of all DigiKey Data."
 
 [ANTHONY: your answer]
 
-### Privacy, security, and limits
-- The fields reviewed are product catalog data. I saw no personal data in them. [VERIFY]
+### Identifiable people: does the data contain or reveal any person?
+- The fields are product catalog data: part numbers, manufacturer (company) names, descriptions, stock, prices, and links.
 - No employer (Ascension) data, part lists, pricing, or credentials were used; all searches are generic public keywords.
-- Mouser §2: keys must be kept secret. Here the key lives only in `.env`, is masked in saved text, and is never logged.
-- Mouser §6: do not exceed assigned call limits; repeat violations may revoke access. Digi-Key §6: exceeding the rate
-  threshold suspends the account for 10 minutes with "403 Forbidden."
+- A pattern search of every text field on all 1,456 unique parts in run 1 found 0 email addresses and 1 phone-shaped
+  string, which was a Mouser part number. The message fields hold only Mouser system text (shipping, region, and tariff
+  notices). People's names can't be detected by a pattern search. [VERIFY: names]
+
+[ANTHONY: your answer]
+
+### Worst realistic harm: what happens if this data leaks or is misread?
+- **Misread:** stock and prices change over time; a saved run shows them only as of `fetched_at`. `Availability` can be the
+  string `"None"` (375 of 1,655 parts in run 1), and prices are text like `"$17.12"`, so naive code can misread both.
+  Keyword results include unrelated parts (8 LDO voltage regulators for "cable manager 1u").
+- **Leak of the API key:** Mouser §2: "You are fully responsible for all activities that occur using your Key(s)." The key is
+  in the request URL (`apiKey` query parameter), so logging URLs would expose it; this project never logs URLs.
+- **Terms breach:** Mouser §5 and §7 allow termination and require deleting all Mouser data; Mouser §6: repeat call-limit
+  violations "may result in revocation." Digi-Key §9: three suspensions can lead to termination.
+
+[ANTHONY: your answer]
+
+### Who may read or change the data (repo, raw files, future database, website)?
+- **Repo:** GitHub `SmrtAss911/bsad6153-huie`. It was cloned without signing in, which suggests it is public. [VERIFY]
+  Committed Mouser data is only `data/sample/mouser_sample.json` (3 parts).
+- **Raw files:** `data/raw/` stays on this computer only (gitignored); anyone with access to this computer can read or change it.
+- **Future database** (from the course template, Weeks 2–6): only the sync uses the owner connection (`DATABASE_URL`); the
+  website and chatbot use a read-only role (`APP_DATABASE_URL`); the agent uses its own limited role (`AGENT_DATABASE_URL`).
+- **Website** (Week 4, per the template): public on Render; the chatbot and agent sit behind `APP_PASSWORD`.
 
 [ANTHONY: your answer]
 
