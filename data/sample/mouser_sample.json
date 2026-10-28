@@ -1,0 +1,324 @@
+{
+  "source": "mouser",
+  "keyword": "rack pdu",
+  "startingRecord": 0,
+  "records": 50,
+  "fetched_at": "2026-10-28T03:28:37+00:00",
+  "http_status": 200,
+  "response": {
+    "Errors": [],
+    "SearchResults": {
+      "NumberOfResult": 1713,
+      "Parts": [
+        {
+          "Availability": "3 In Stock",
+          "DataSheetUrl": "https://www.mouser.com/datasheet/3/55/1/pdumh20at.pdf",
+          "Description": "Power Outlet Strips Metered PDU w/ATS 120V 16 outlets RM",
+          "FactoryStock": "0",
+          "ImagePath": "https://www.mouser.com/images/eatoncorporation/images/PDUMH20AT_SPL.jpg",
+          "Category": "Power Outlet Strips",
+          "LeadTime": "26 Days",
+          "LifecycleStatus": null,
+          "Manufacturer": "Tripp Lite",
+          "ManufacturerPartNumber": "PDUMH20AT",
+          "Min": "1",
+          "Mult": "1",
+          "MouserPartNumber": "545-PDUMH20AT",
+          "ProductAttributes": [
+            {
+              "AttributeName": "Standard Pack Qty",
+              "AttributeValue": "1"
+            }
+          ],
+          "PriceBreaks": [
+            {
+              "Quantity": 1,
+              "Price": "$623.98",
+              "Currency": "USD"
+            },
+            {
+              "Quantity": 5,
+              "Price": "$609.15",
+              "Currency": "USD"
+            },
+            {
+              "Quantity": 10,
+              "Price": "$604.40",
+              "Currency": "USD"
+            }
+          ],
+          "AlternatePackagings": null,
+          "ProductDetailUrl": "https://www.mouser.com/en/ProductDetail/Tripp-Lite/PDUMH20AT?qs=r25ZCYzTevkMVKft4kusow%3D%3D",
+          "Reeling": false,
+          "ROHSStatus": "RoHS Compliant",
+          "SuggestedReplacement": "",
+          "MultiSimBlue": 0,
+          "UnitWeightKg": {
+            "UnitWeight": 5.5338224
+          },
+          "AvailabilityInStock": "3",
+          "AvailabilityOnOrder": [],
+          "InfoMessages": [
+            "Due to size or weight of the product, your shipping charge may increase."
+          ],
+          "SurchargeMessages": [
+            {
+              "code": "TARIFF_US",
+              "message": "A tariff of 8% may be applied if shipping to the United States."
+            }
+          ],
+          "ProductCompliance": [
+            {
+              "ComplianceName": "USHTS",
+              "ComplianceValue": "8537109170"
+            },
+            {
+              "ComplianceName": "CNHTS",
+              "ComplianceValue": "8544422900"
+            },
+            {
+              "ComplianceName": "CAHTS",
+              "ComplianceValue": "8544420090"
+            },
+            {
+              "ComplianceName": "JPHTS",
+              "ComplianceValue": "853710000"
+            },
+            {
+              "ComplianceName": "TARIC",
+              "ComplianceValue": "8544429090"
+            },
+            {
+              "ComplianceName": "ECCN",
+              "ComplianceValue": "EAR99"
+            }
+          ],
+          "TradeCompliance": [
+            {
+              "ComplianceName": "Country of Origin",
+              "ComplianceValue": "Taiwan",
+              "ComplianceDescription": "The country where a product was manufactured, produced, or substantially transformed."
+            },
+            {
+              "ComplianceName": "Assembly Country of Origin",
+              "ComplianceValue": "Not available",
+              "ComplianceDescription": "The country where the final product is physically assembled from its components."
+            },
+            {
+              "ComplianceName": "Country of Diffusion",
+              "ComplianceValue": "Not available",
+              "ComplianceDescription": "The country where the wafer used in a semiconductor was fabricated."
+            }
+          ]
+        },
+        {
+          "Availability": "5 In Stock",
+          "DataSheetUrl": "https://www.mouser.com/datasheet/3/220/1/pduh30hv19.pdf",
+          "Description": "Power Outlet Strips PDUH30HV19",
+          "FactoryStock": "0",
+          "ImagePath": "https://www.mouser.com/images/eatoncorporation/images/PDUH30HV19_SPL.jpg",
+          "Category": "Power Outlet Strips",
+          "LeadTime": "0 Days",
+          "LifecycleStatus": null,
+          "Manufacturer": "Tripp Lite",
+          "ManufacturerPartNumber": "PDUH30HV19",
+          "Min": "1",
+          "Mult": "1",
+          "MouserPartNumber": "545-PDUH30HV19",
+          "ProductAttributes": [
+            {
+              "AttributeName": "Packaging",
+              "AttributeValue": "Bulk"
+            },
+            {
+              "AttributeName": "Standard Pack Qty",
+              "AttributeValue": "1"
+            }
+          ],
+          "PriceBreaks": [
+            {
+              "Quantity": 1,
+              "Price": "$459.32",
+              "Currency": "USD"
+            },
+            {
+              "Quantity": 5,
+              "Price": "$459.22",
+              "Currency": "USD"
+            },
+            {
+              "Quantity": 10,
+              "Price": "$453.00",
+              "Currency": "USD"
+            },
+            {
+              "Quantity": 25,
+              "Price": "$442.62",
+              "Currency": "USD"
+            }
+          ],
+          "AlternatePackagings": null,
+          "ProductDetailUrl": "https://www.mouser.com/en/ProductDetail/Tripp-Lite/PDUH30HV19?qs=gsQj%2FRNRGSaqUhNzLu%2FG1w%3D%3D",
+          "Reeling": false,
+          "ROHSStatus": "RoHS Compliant",
+          "SuggestedReplacement": "",
+          "MultiSimBlue": 0,
+          "UnitWeightKg": {
+            "UnitWeight": 3.51080208
+          },
+          "AvailabilityInStock": "5",
+          "AvailabilityOnOrder": [],
+          "InfoMessages": [],
+          "SurchargeMessages": [
+            {
+              "code": "TARIFF_US",
+              "message": "A tariff of 11% may be applied if shipping to the United States."
+            }
+          ],
+          "ProductCompliance": [
+            {
+              "ComplianceName": "USHTS",
+              "ComplianceValue": "8537109170"
+            },
+            {
+              "ComplianceName": "JPHTS",
+              "ComplianceValue": "853710000"
+            },
+            {
+              "ComplianceName": "ECCN",
+              "ComplianceValue": "EAR99"
+            }
+          ],
+          "TradeCompliance": [
+            {
+              "ComplianceName": "Country of Origin",
+              "ComplianceValue": "Vietnam",
+              "ComplianceDescription": "The country where a product was manufactured, produced, or substantially transformed."
+            },
+            {
+              "ComplianceName": "Assembly Country of Origin",
+              "ComplianceValue": "Not available",
+              "ComplianceDescription": "The country where the final product is physically assembled from its components."
+            },
+            {
+              "ComplianceName": "Country of Diffusion",
+              "ComplianceValue": "Not available",
+              "ComplianceDescription": "The country where the wafer used in a semiconductor was fabricated."
+            }
+          ]
+        },
+        {
+          "Availability": "9 In Stock",
+          "DataSheetUrl": "https://www.mouser.com/datasheet/3/220/1/pdumh20hv.pdf",
+          "Description": "Power Outlet Strips PDUMH20HV",
+          "FactoryStock": "0",
+          "ImagePath": "https://www.mouser.com/images/eatoncorporation/images/PDUMH20HV_SPL.jpg",
+          "Category": "Power Outlet Strips",
+          "LeadTime": "15 Days",
+          "LifecycleStatus": null,
+          "Manufacturer": "Tripp Lite",
+          "ManufacturerPartNumber": "PDUMH20HV",
+          "Min": "1",
+          "Mult": "1",
+          "MouserPartNumber": "545-PDUMH20HV",
+          "ProductAttributes": [
+            {
+              "AttributeName": "Packaging",
+              "AttributeValue": "Bulk"
+            },
+            {
+              "AttributeName": "Standard Pack Qty",
+              "AttributeValue": "1"
+            }
+          ],
+          "PriceBreaks": [
+            {
+              "Quantity": 1,
+              "Price": "$311.06",
+              "Currency": "USD"
+            },
+            {
+              "Quantity": 5,
+              "Price": "$290.33",
+              "Currency": "USD"
+            },
+            {
+              "Quantity": 10,
+              "Price": "$261.84",
+              "Currency": "USD"
+            },
+            {
+              "Quantity": 25,
+              "Price": "$256.35",
+              "Currency": "USD"
+            }
+          ],
+          "AlternatePackagings": null,
+          "ProductDetailUrl": "https://www.mouser.com/en/ProductDetail/Tripp-Lite/PDUMH20HV?qs=hzNRMSf40UYsk8RUJ99PtQ%3D%3D",
+          "Reeling": false,
+          "ROHSStatus": "RoHS Compliant",
+          "SuggestedReplacement": "",
+          "MultiSimBlue": 0,
+          "UnitWeightKg": {
+            "UnitWeight": 3.0844256
+          },
+          "AvailabilityInStock": "9",
+          "AvailabilityOnOrder": [],
+          "InfoMessages": [
+            "Due to size or weight of the product, your shipping charge may increase."
+          ],
+          "SurchargeMessages": [
+            {
+              "code": "TARIFF_US",
+              "message": "A tariff of 8% may be applied if shipping to the United States."
+            }
+          ],
+          "ProductCompliance": [
+            {
+              "ComplianceName": "USHTS",
+              "ComplianceValue": "8536308000"
+            },
+            {
+              "ComplianceName": "CNHTS",
+              "ComplianceValue": "8536300000"
+            },
+            {
+              "ComplianceName": "CAHTS",
+              "ComplianceValue": "8536309090"
+            },
+            {
+              "ComplianceName": "JPHTS",
+              "ComplianceValue": "8536300006"
+            },
+            {
+              "ComplianceName": "KRHTS",
+              "ComplianceValue": "8536300000"
+            },
+            {
+              "ComplianceName": "ECCN",
+              "ComplianceValue": "EAR99"
+            }
+          ],
+          "TradeCompliance": [
+            {
+              "ComplianceName": "Country of Origin",
+              "ComplianceValue": "Taiwan",
+              "ComplianceDescription": "The country where a product was manufactured, produced, or substantially transformed."
+            },
+            {
+              "ComplianceName": "Assembly Country of Origin",
+              "ComplianceValue": "Not available",
+              "ComplianceDescription": "The country where the final product is physically assembled from its components."
+            },
+            {
+              "ComplianceName": "Country of Diffusion",
+              "ComplianceValue": "Not available",
+              "ComplianceDescription": "The country where the wafer used in a semiconductor was fabricated."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "sample_note": "Trimmed to the first 3 of 50 parts from 20261028T032805Z_rack-pdu_p1.json."
+}
