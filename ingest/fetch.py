@@ -14,6 +14,7 @@ import random
 import re
 import sys
 import time
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -41,6 +42,10 @@ LIMIT_RETRIES = 4        # backoff about 5, 10, 20, 40 s, each plus up to 1 s of
 TRANSIENT_RETRIES = 3    # timeouts, connection errors, 5xx
 BACKOFF_BASE = 5
 
+# Normalized fields whose gaps are counted and reported in the summary.
+MISSING_FIELDS = ["manufacturer_part_number", "availability_text", "in_stock_qty", "lead_time",
+                  "lifecycle_status", "price_breaks", "attributes"]
+
 
 def log(message):
     print(message, flush=True)
@@ -63,6 +68,7 @@ class Fetcher:
         self.unique_parts = set()
         self.manufacturers = set()
         self.error_log = []
+        self.missing = Counter()
         self.stopped = None
         self._last_call = None
 
@@ -153,6 +159,9 @@ class Fetcher:
                 self.manufacturers.add(part.manufacturer)
             self.stats["price_breaks"] += len(part.price_breaks)
             self.stats["attributes"] += len(part.attributes)
+            for name in MISSING_FIELDS:
+                if getattr(part, name) in (None, "", []):
+                    self.missing[name] += 1
 
     def run(self, keywords, max_pages):
         try:
@@ -190,6 +199,9 @@ class Fetcher:
         log(f"  attributes:      {s['attributes']}")
         log(f"  manufacturers:   {len(self.manufacturers)}")
         log(f"  malformed parts: {s['malformed_parts']}")
+        log(f"  missing fields (of {s['parts']} part records):")
+        for name in MISSING_FIELDS:
+            log(f"    {name:25} {self.missing[name]}")
         log(f"  elapsed:         {elapsed:.0f} s")
         for line in self.error_log:
             log(f"  error: {line}")

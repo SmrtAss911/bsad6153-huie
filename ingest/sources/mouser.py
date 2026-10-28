@@ -41,6 +41,13 @@ def _to_price(text):
         return None
 
 
+def _text(value):
+    """Mouser sometimes sends the string "None" instead of leaving a field out; treat it as missing."""
+    if value is None or str(value).strip() in ("", "None"):
+        return None
+    return value
+
+
 class MouserSource(Source):
     name = "mouser"
     max_page_size = 50  # "Up to 50 results returned per call" (api-search page)
@@ -133,7 +140,7 @@ class MouserSource(Source):
             manufacturer_part_number=raw_part.get("ManufacturerPartNumber"),
             description=raw_part.get("Description"),
             category=raw_part.get("Category"),
-            availability_text=raw_part.get("Availability"),
+            availability_text=_text(raw_part.get("Availability")),
             in_stock_qty=_to_int(raw_part.get("AvailabilityInStock")),
             lead_time=raw_part.get("LeadTime"),
             lifecycle_status=raw_part.get("LifecycleStatus"),
