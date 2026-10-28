@@ -1,4 +1,4 @@
-# BSAD 6153 Project: &lt;your project name&gt;
+# BSAD 6153 Project: Datacenter Parts Sourcing Assistant
 
 **Student:** Anthony Huie
 **My decision:** Weekly parts sourcing: for each standard datacenter part on my weekly pick list, whether to buy from my preferred vendor or an alternate distributor, based on price, stock, and lead time (data source: Mouser Search API).
@@ -127,3 +127,5 @@ See `docs/data_dictionary.md` for what the data means.
 ## Credits
 
 <!-- Your data API's required attribution, plus any open-source code or samples you used. -->
+
+Part data: Mouser Electronics Search API (https://www.mouser.com). Data shown is attributed to Mouser Electronics.
