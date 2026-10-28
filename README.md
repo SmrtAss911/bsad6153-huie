@@ -103,6 +103,27 @@ every command before you approve it, and keep auto-approve off.
 
 <!-- Keep this current: how to run the sync, the website, and the evaluations. -->
 
+### Run instructions (Milestone 1: fetch)
+
+1. **Set up once** (see "Setting up your computer" above): create `.venv` with Python 3.12 and
+   `pip install -r requirements.txt`.
+2. **Add your keys to `.env`** (never to `.env.example`, and never paste them into a chat):
+   - `MOUSER_API_KEY=` your Mouser Search API key (required)
+   - `DIGIKEY_CLIENT_ID=` and `DIGIKEY_CLIENT_SECRET=` for the Digi-Key backup (optional; the adapter is not finished yet)
+3. **Fetch:** with `.venv` active, from the project folder:
+
+   ```
+   python ingest/fetch.py --source mouser
+   ```
+
+   It makes up to 36 calls (12 keywords, up to 3 pages of 50), waits 2.5 s between calls, and takes about 1.5 minutes.
+   Raw responses go to `data/raw/mouser/` (ignored by Git). It ends with a summary of calls, records, retries, and errors.
+   Exit code 0 means OK, 1 means it stopped early or got no parts, and 2 means the source isn't configured.
+4. **Options:** `--max-pages N` (pages per keyword, default 3) and `--max-calls N` (cap per run, default 100).
+   `--source digikey` currently prints "not configured."
+
+See `docs/data_dictionary.md` for what the data means.
+
 ## Credits
 
 <!-- Your data API's required attribution, plus any open-source code or samples you used. -->
