@@ -125,7 +125,7 @@ Factual notes only. My judgment goes after each.
   materials that reference Mouser, including "screen shots," need prior written consent. Digi-Key §3.1.4: "clearly and
   conspicuously attribute DigiKey as the source of all DigiKey Data."
 
-[ANTHONY: your answer]
+**My answer:** Unless it's a legal requirement, it doesn't bother me. Since these files are all local, they're not exposed to the public, they're for my personal use, and they're not used for corporate or money-making opportunities. Therefore, it doesn't really matter.
 
 ### Identifiable people: does the data contain or reveal any person?
 - The fields are product catalog data: part numbers, manufacturer (company) names, descriptions, stock, prices, and links.
@@ -134,7 +134,7 @@ Factual notes only. My judgment goes after each.
   string, which was a Mouser part number. The message fields hold only Mouser system text (shipping, region, and tariff
   notices). People's names can't be detected by a pattern search. [VERIFY: names]
 
-[ANTHONY: your answer]
+**My answer:** No. It's only product information and part numbers, no personal or identifying data. That's also why this kind of tool is fine to use for my employer's work.
 
 ### Worst realistic harm: what happens if this data leaks or is misread?
 - **Misread:** stock and prices change over time; a saved run shows them only as of `fetched_at`. `Availability` can be the
@@ -145,17 +145,17 @@ Factual notes only. My judgment goes after each.
 - **Terms breach:** Mouser §5 and §7 allow termination and require deleting all Mouser data; Mouser §6: repeat call-limit
   violations "may result in revocation." Digi-Key §9: three suspensions can lead to termination.
 
-[ANTHONY: your answer]
+**My answer:** Somebody gets a lot of data and part numbers and takes credit for the work I did assembling it.
 
 ### Who may read or change the data (repo, raw files, future database, website)?
-- **Repo:** GitHub `SmrtAss911/bsad6153-huie`. It was cloned without signing in, which suggests it is public. [VERIFY]
+- **Repo:** GitHub `SmrtAss911/bsad6153-huie`. Public (confirmed on GitHub).
   Committed Mouser data is only `data/sample/mouser_sample.json` (3 parts).
 - **Raw files:** `data/raw/` stays on this computer only (gitignored); anyone with access to this computer can read or change it.
 - **Future database** (from the course template, Weeks 2–6): only the sync uses the owner connection (`DATABASE_URL`); the
   website and chatbot use a read-only role (`APP_DATABASE_URL`); the agent uses its own limited role (`AGENT_DATABASE_URL`).
 - **Website** (Week 4, per the template): public on Render; the chatbot and agent sit behind `APP_PASSWORD`.
 
-[ANTHONY: your answer]
+**My answer:** Only I can change it. The public just sees the read-only site during the class. When the class is over, I'm going to bring this back internal, develop it in-house within my own security, and use what I'm doing with Google AppSheet as the future roadmap.
 
 ---
 

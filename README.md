@@ -96,8 +96,15 @@ every command before you approve it, and keep auto-approve off.
 
 ## Project proposal (Week 1)
 
-<!-- About 300 words: data source and backup API, your decision and workflow (from your baseline log),
-     your first agent idea, and risks. See the Week 1 page. -->
+**Data source and backup.** My data source is the Mouser Search API. Twelve keyword searches for datacenter parts (patch cables, fiber, power cords, PDUs, shelves, cable managers, SFPs) returned 1,456 unique parts from 56 manufacturers and 8,453 price breaks. Stock, lead time and price change over time, which is what my decision depends on. My backup is the Digi-Key Product Information API v4; its adapter is stubbed in `ingest/sources/digikey.py`. Mouser is not on the course menu, so I am asking for approval here. Mouser's terms restrict storing their data, so raw files stay local and gitignored, only a 3 part sample is committed, and the site attributes Mouser.
+
+**Decision and workflow.** For each item on a datacenter pick list I decide what to buy and where, based on spec, stock, lead time and price. Cables can come from any brand if the spec matches; PDUs and racks need exact model numbers. My baseline log showed the lookup starts on Google and ends in an email quote from one or two vendors. Hands-on time is 5 to 15 minutes for cables and optics and about two hours for PDUs and cabinets, but calendar time is a couple of days to a week because every quote and order is an email round trip. I make these decisions anywhere from several times a day to once a week depending on workload. The bigger cost is wrong parts: 16 amp PDUs instead of 20 amp, 23 inch telco racks instead of 19 inch, a network cabinet instead of a server cabinet. Each came from part numbers and titles that look alike. My goal is to narrow purchasing to one vendor, two at most.
+
+**Agent idea (Week 6).** An agent takes my pick list, matches commodity items by spec and exact items by manufacturer part number, checks stock, lead time and price breaks, and builds a recommended cart with its reasoning. It flags spec mismatches (amperage, rack width, cabinet type) against my saved standards, and it never places an order; I approve everything. Success means no wrong parts, no rework, and a cart in minutes instead of days.
+
+**Risks.** Vendor terms on storage and display; keyword search returns unrelated parts (a voltage regulator under "cable manager"); stock and price go stale between syncs; 30 calls a minute and 1,000 a day limit refreshes.
+
+AI use: drafted with Claude from my fetched data and notes; verified and revised by Anthony Huie.
 
 ## How to run this project
 
