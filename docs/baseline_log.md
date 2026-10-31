@@ -1,19 +1,24 @@
 # Baseline Log (Week 1)
 
-**My decision:** <!-- what you decide, in one line -->
-**How often I make it:** <!-- e.g., twice a week -->
+**My decision:** Which datacenter parts to buy (part number, spec, and vendor) for each item on a pick list, based on spec, stock, lead time and price.
+**How often I make it:** Sometimes multiple times a day and sometimes just once a week, just depends on the workload.
 
 Log each decision **while it happens**. Time yourself with a timer; don't estimate afterward.
 Mark any entry you had to reconstruct from memory as *(reconstructed)*.
 
 | Date | What I was deciding | What I looked at | Time (min) | What I wished I knew | Confidence (1&ndash;5) |
 |---|---|---|---|---|---|
-|  |  |  |  |  |  |
+| ~Feb–Apr 2026 *(reconstructed)* | APC cabinets. We ran into issues with the part numbers, the sizes and the designs. At one site in Oklahoma we ended up with the network rack and not the standard server rack. | Did the lookup initially on Google but found conflicting information. Then went to the vendor, and the vendor provided two different part numbers because they have different part numbers than the manufacturer (custom for the vendor), which throws in an extra level of inconsistency and confusion. | ~120 effort (estimated); a week or longer of calendar time | I wish the descriptions would have been more accurate. The descriptions are not very accurate, so we don't know exactly what we're getting, and there seem to be inconsistencies across the board because these are very expensive and usually custom items. | 5 (I thought it was a five, but apparently it was not) |
+| ~Apr 2026 *(reconstructed)* | Vertiv PDUs. Two PDUs in the line, one with 16 amp circuits and one with 20 amp circuits, six circuits each. We meant to only have the 20 amp ones but ended up with ten 16 amp ones, which take fewer servers. | I trusted the vendor and didn't validate it on my own because the PDU titles were the same; the difference was in the details. We were in a hurry. Found it recently while diagnosing an overload in a chat with Claude. | ~120 (estimated; the order took a couple of hours) | The idiosyncrasies of the breakers and their limitations, and that even though the part numbers are different the titles are the same, so we can't trust the vendor or the salespeople until we look at the absolute details. | 5 |
+| ~Aug 2026 *(reconstructed)* | 19 inch racks for a network core expansion at a site in Illinois. The electrician ordered 23 inch telco width racks, and our gear is standard 19 inch. | The racks came in after a month long wait. They were open post racks, so the electrician was able to drill new holes and bring the rails closer together to make them 19 inch. Had that not been possible, it could have delayed a multi-million dollar project or forced really bad temporary solutions. | Unknown; one month wait plus rework | I wished I knew it was a 23" rack vs a 19" rack before ordering so we could have fixed it. | 4 |
+| Week of 2026-10-19 *(reconstructed)* | Commodity cables: fiber, Ethernet and power cords. | Everything is manual: email the vendor for a quote, about half a day for a response, reply "yes, order," another half day for the order information. A couple of days to get the order done for something that should take 10 to 15 minutes. | ~5 to 10 hands-on (estimated); a couple of days calendar | Nothing about the cables, just the quantity in stock with the vendor and the ETA on delivery. | 5 |
+| 2026-10-23 (in progress) | Optics for another project: 400 Extreme 25 gig SFPs or 10/25 gig auto-sensing SFPs. | Emailed the vendor directly on Friday with a generic description. Waiting for a price and quote over the weekend; hopefully order midweek and have them in hand next week. | ~15 hands-on so far | The exact part number, so I could be more specific and more automated instead of sending a generic description. | 5 |
+| Ongoing (last 2–3 weeks) | Cable management and miscellaneous items: holding off on ordering. | I don't have good specs or visibility into what people actually want. I don't want to order cable management somebody doesn't want to use in their datacenter. | Two or three weeks off and on | A set of standards for what people like to use in their datacenters, which I can then produce for them inside the application. | 2 |
 
 ## Reflection
 
-1. **The three most frustrating or time-consuming parts:**
-2. **What would make me trust a system's recommendation? What would make me ignore it?**
-3. **What a system should never do on my behalf without asking:**
-4. **How I would know it was actually helping** (this becomes my value hypothesis):
-5. **One assumption about my own workflow that this log proved wrong:**
+1. **The three most frustrating or time-consuming parts:** The research. Doing things manually takes a lot of time. And when doing it through AI, the genericism, or the inability to understand the nuances of what people want or like, or the nuances of installations in racks.
+2. **What would make me trust a system's recommendation? What would make me ignore it?** Trust: much more granular detail and validation on the specs of what we're ordering. For example, if I set 20 amp circuits on the PDU as the gold standard, future PDUs will always have 20 amp circuits, and that standard is built in going forward. Ignore: ambiguity, not having clear, precise specs like the amperage of the PDUs.
+3. **What a system should never do on my behalf without asking:** Ordering, predominantly.
+4. **How I would know it was actually helping** (this becomes my value hypothesis): It makes me feel like I'm saving time and speed to market. I'd like to see the elimination of incorrect parts, the automation of developing the BOM, parts list or pick list, accuracy of delivery, accuracy of the installation post-delivery, and no rework.
+5. **One assumption about my own workflow that this log proved wrong:** The assumption that I actually pay attention to the details, when I don't.
