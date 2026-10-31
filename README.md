@@ -1,4 +1,4 @@
-# BSAD 6153 Project: &lt;your project name&gt;
+# BSAD 6153 Project: Datacenter Parts Sourcing Assistant
 
 **Student:** Anthony Huie
 **My decision:** Weekly parts sourcing: for each standard datacenter part on my weekly pick list, whether to buy from my preferred vendor or an alternate distributor, based on price, stock, and lead time (data source: Mouser Search API).
@@ -96,13 +96,43 @@ every command before you approve it, and keep auto-approve off.
 
 ## Project proposal (Week 1)
 
-<!-- About 300 words: data source and backup API, your decision and workflow (from your baseline log),
-     your first agent idea, and risks. See the Week 1 page. -->
+**Data source and backup.** My data source is the Mouser Search API. Twelve keyword searches for datacenter parts (patch cables, fiber, power cords, PDUs, shelves, cable managers, SFPs) returned 1,456 unique parts from 56 manufacturers and 8,453 price breaks. Stock, lead time and price change over time, which is what my decision depends on. My backup is the Digi-Key Product Information API v4; its adapter is stubbed in `ingest/sources/digikey.py`. Mouser is not on the course menu, so I am asking for approval here. Mouser's terms restrict storing their data, so raw files stay local and gitignored, only a 3 part sample is committed, and the site attributes Mouser.
+
+**Decision and workflow.** For each item on a datacenter pick list I decide what to buy and where, based on spec, stock, lead time and price. Cables can come from any brand if the spec matches; PDUs and racks need exact model numbers. My baseline log showed the lookup starts on Google and ends in an email quote from one or two vendors. Hands-on time is 5 to 15 minutes for cables and optics and about two hours for PDUs and cabinets, but calendar time is a couple of days to a week because every quote and order is an email round trip. I make these decisions anywhere from several times a day to once a week depending on workload. The bigger cost is wrong parts: 16 amp PDUs instead of 20 amp, 23 inch telco racks instead of 19 inch, a network cabinet instead of a server cabinet. Each came from part numbers and titles that look alike. My goal is to narrow purchasing to one vendor, two at most.
+
+**Agent idea (Week 6).** An agent takes my pick list, matches commodity items by spec and exact items by manufacturer part number, checks stock, lead time and price breaks, and builds a recommended cart with its reasoning. It flags spec mismatches (amperage, rack width, cabinet type) against my saved standards, and it never places an order; I approve everything. Success means no wrong parts, no rework, and a cart in minutes instead of days.
+
+**Risks.** Vendor terms on storage and display; keyword search returns unrelated parts (a voltage regulator under "cable manager"); stock and price go stale between syncs; 30 calls a minute and 1,000 a day limit refreshes.
+
+AI use: drafted with Claude from my fetched data and notes; verified and revised by Anthony Huie.
 
 ## How to run this project
 
 <!-- Keep this current: how to run the sync, the website, and the evaluations. -->
 
+### Run instructions (Milestone 1: fetch)
+
+1. **Set up once** (see "Setting up your computer" above): create `.venv` with Python 3.12 and
+   `pip install -r requirements.txt`.
+2. **Add your keys to `.env`** (never to `.env.example`, and never paste them into a chat):
+   - `MOUSER_API_KEY=` your Mouser Search API key (required)
+   - `DIGIKEY_CLIENT_ID=` and `DIGIKEY_CLIENT_SECRET=` for the Digi-Key backup (optional; the adapter is not finished yet)
+3. **Fetch:** with `.venv` active, from the project folder:
+
+   ```
+   python ingest/fetch.py --source mouser
+   ```
+
+   It makes up to 36 calls (12 keywords, up to 3 pages of 50), waits 2.5 s between calls, and takes about 1.5 minutes.
+   Raw responses go to `data/raw/mouser/` (ignored by Git). It ends with a summary of calls, records, retries, and errors.
+   Exit code 0 means OK, 1 means it stopped early or got no parts, and 2 means the source isn't configured.
+4. **Options:** `--max-pages N` (pages per keyword, default 3) and `--max-calls N` (cap per run, default 100).
+   `--source digikey` currently prints "not configured."
+
+See `docs/data_dictionary.md` for what the data means.
+
 ## Credits
 
 <!-- Your data API's required attribution, plus any open-source code or samples you used. -->
+
+Part data: Mouser Electronics Search API (https://www.mouser.com). Data shown is attributed to Mouser Electronics.

@@ -11,6 +11,9 @@ venv/
 # Raw API downloads can be large; commit a small sample to data/sample/ instead
 data/raw/
 
+# Local-only AI review log draft (pasted into the PR description, not committed)
+docs/ai_review_log_draft.md
+
 # Python and editor clutter
 __pycache__/
 *.pyc
