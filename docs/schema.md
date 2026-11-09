@@ -118,4 +118,4 @@ Claude recommended leaving them out of the columns this week and searching descr
 
 The result is 63 of 257 power strips with an amp rating and 51 of 301 rack products with a width. The column is named `rated_amps` and not `circuit_amps` because descriptions usually give the unit's rating, often its input, and not the per-circuit breaker rating that caused my PDU mistake. The original text stays in `parts.raw`.
 
-[ANTHONY: confirm this matches what you decided]
+Confirmed: this matches what I decided.

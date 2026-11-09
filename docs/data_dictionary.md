@@ -132,7 +132,7 @@ related rows, loaded by `ingest/load.py`, including each part's full API respons
 hosted by Supabase, not only on this computer. Mouser §4, quoted above, restricts storing its content and using it "to update or
 create your own database of business listing information."
 
-**My answer:** [ANTHONY: your answer]
+**My answer:** I realize this data is now hosted in the cloud, but since it's a password protected database for personal and educational use, I don't believe it violates the agreement. I also looked into using the Mouser API for my work database, and found it's licensed for personal use, not corporate use, so I can't use it that way.
 
 ### Identifiable people: does the data contain or reveal any person?
 - The fields are product catalog data: part numbers, manufacturer (company) names, descriptions, stock, prices, and links.
