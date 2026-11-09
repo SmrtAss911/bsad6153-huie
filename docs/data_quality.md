@@ -93,11 +93,11 @@ By country of origin (`TradeCompliance`):
 may pay. In this data, that tilts toward manufacturers like Tripp Lite (96% of its parts tariffed) and against
 manufacturers with no tariffed parts, like StarTech.
 
-[ANTHONY: your fairness judgment in your own words]
+The fairness check here would go vendor to vendor. If it was purely decided by price, products with tariffs would look cheaper than products without tariffs, and therefore might get selected just purely based off price alone, which obviously isn't a good thing
 
 ## If an agent acted on this unaware
 
-- **Tariff:** recommends the cheapest listed part, which may cost more after a tariff of up to 120%. [ANTHONY: confirm]
+- **Tariff:** recommends the cheapest listed part, which may cost more after a tariff of up to 120%.
 - **No stock:** reports `"None"` parts as in stock or unknown, and recommends parts that can't ship.
 - **Lifecycle:** treats a null lifecycle as active and recommends parts that may be near end of life.
 - **Keyword noise:** recommends a voltage regulator when asked for a 1U cable manager.
