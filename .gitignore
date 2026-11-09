@@ -13,6 +13,7 @@ data/raw/
 
 # Local-only AI review log draft (pasted into the PR description, not committed)
 docs/ai_review_log_draft.md
+docs/ai_review_log_draft_m2.md
 
 # Python and editor clutter
 __pycache__/
@@ -23,3 +24,6 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
+
+# Claude Code local settings (machine-specific, not for the repo)
+.claude/settings.local.json
