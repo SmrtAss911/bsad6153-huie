@@ -36,4 +36,3 @@ Query numbers refer to `db/queries.sql`. Data: Mouser Search API only, as of eac
 | 17 | What cable management do people want to use in their datacenters? | Cable management | That is a preference and a standard. It is not catalog data. |
 | 18 | Did the parts arrive correct, install correctly, and avoid rework? | Reflection, value hypothesis | No order, delivery, or installation data. |
 
-[ANTHONY: add any other questions you ask about this decision]

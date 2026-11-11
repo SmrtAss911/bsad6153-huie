@@ -31,7 +31,7 @@ order by parts desc;
 
 -- Q3 (Illinois 23 inch racks): Which full racks state a width, and which do not?
 -- SURPRISING RESULT: of 18 full racks, 6 state a width, all 23 inch, and none states 19 inch.
--- Why it surprised me: 19 inch is the standard for our gear, so I expected it to be stated most often.
+-- Why it surprised me: 19" racks are our standard, and 23" are an exception that shouldn't. I would assume anything that doesn't have 19" listed is a 19" rack.
 -- The width that caused my mistake is the only one spelled out; the other 12 racks need a datasheet check.
 -- Limit: none of the 12 search keywords targeted full racks, so 18 is a small sample.
 select coalesce(p.rack_width_in::text, 'not stated') as width_in, m.name as manufacturer,
