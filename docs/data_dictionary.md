@@ -127,6 +127,13 @@ Factual notes only. My judgment goes after each.
 
 **My answer:** Unless it's a legal requirement, it doesn't bother me. Since these files are all local, they're not exposed to the public, they're for my personal use, and they're not used for corporate or money-making opportunities. Therefore, it doesn't really matter.
 
+**Milestone 2 update (2026-11-09):** this data now also lives in a Supabase Postgres database for this course: 1,462 parts and
+related rows, loaded by `ingest/load.py`, including each part's full API response in `parts.raw`. Unlike `data/raw/`, this copy is
+hosted by Supabase, not only on this computer. Mouser §4, quoted above, restricts storing its content and using it "to update or
+create your own database of business listing information."
+
+**My answer:** I realize this data is now hosted in the cloud, but since it's a password protected database for personal and educational use, I don't believe it violates the agreement. I also looked into using the Mouser API for my work database, and found it's licensed for personal use, not corporate use, so I can't use it that way.
+
 ### Identifiable people: does the data contain or reveal any person?
 - The fields are product catalog data: part numbers, manufacturer (company) names, descriptions, stock, prices, and links.
 - No employer (Ascension) data, part lists, pricing, or credentials were used; all searches are generic public keywords.
