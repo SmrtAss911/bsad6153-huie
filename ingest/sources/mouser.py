@@ -16,6 +16,8 @@ from .base import (AccessDenied, BadResponse, PartRecord, RateLimited, SearchPag
                    Source, SourceNotConfigured, TransientError)
 
 KEYWORD_URL = "https://api.mouser.com/api/v1/search/keyword"
+PART_URL = "https://api.mouser.com/api/v1/search/partnumber"
+MAX_PART_NUMBERS = 10  # per partnumber call, pipe-separated (Mouser API spec)
 TIMEOUT = (10, 30)  # seconds to connect, seconds to wait for the answer
 
 # Words we treat as "you called too often" if they appear in Mouser's Errors list.
@@ -74,8 +76,22 @@ class MouserSource(Source):
             "records": min(limit, self.max_page_size),
             "startingRecord": offset,
         }}
+        return self._post(KEYWORD_URL, body)
+
+    def search_part_numbers(self, part_numbers):
+        """Look up to 10 Mouser part numbers in one call (exact match). Does not page."""
+        if not 1 <= len(part_numbers) <= MAX_PART_NUMBERS:
+            raise ValueError(f"1 to {MAX_PART_NUMBERS} part numbers per call")
+        body = {"SearchByPartRequest": {
+            "mouserPartNumber": "|".join(part_numbers),
+            "partSearchOptions": "Exact",
+        }}
+        return self._post(PART_URL, body)
+
+    def _post(self, url, body):
+        """One API call with the shared error handling. Returns a SearchPage."""
         try:
-            resp = self._session.post(KEYWORD_URL, params={"apiKey": self._api_key},
+            resp = self._session.post(url, params={"apiKey": self._api_key},
                                       json=body, timeout=TIMEOUT)
         except requests.Timeout:
             raise TransientError("timeout") from None

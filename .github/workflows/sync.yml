@@ -1,0 +1,32 @@
+name: Sync Mouser data
+
+on:
+  schedule:
+    - cron: "17 11,23 * * *"   # 11:17 and 23:17 UTC = 5:17 am and 5:17 pm US Central (standard time)
+  workflow_dispatch:            # the "Run workflow" button
+
+permissions:
+  contents: read                # the job only reads the repo
+
+concurrency:
+  group: mouser-sync            # GitHub queues a second run instead of starting it alongside
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30         # a normal run takes 8 to 12 minutes
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install packages
+        run: pip install -r requirements.txt
+      - name: Sync
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MOUSER_API_KEY: ${{ secrets.MOUSER_API_KEY }}
+          TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
+        run: python ingest/sync.py --trigger "$TRIGGER"

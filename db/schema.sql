@@ -100,3 +100,19 @@ create table part_search_hits (
 );
 
 create index part_search_hits_part_idx on part_search_hits (part_id);
+
+-- One run of ingest/sync.py (Week 3). The row is written once, when the run ends.
+create table sync_runs (
+    run_id           bigint generated always as identity primary key,
+    started_at       timestamptz not null,
+    finished_at      timestamptz not null,
+    status           text not null check (status in ('success', 'partial', 'failed')),
+    records_fetched  integer not null default 0 check (records_fetched >= 0),
+    records_inserted integer not null default 0 check (records_inserted >= 0),
+    records_updated  integer not null default 0 check (records_updated >= 0),
+    error_message    text,  -- short and safe: no keys, URLs, or API payloads
+    trigger          text not null check (trigger in ('schedule', 'manual')),
+    check (finished_at >= started_at)
+);
+
+create index sync_runs_finished_idx on sync_runs (finished_at desc);

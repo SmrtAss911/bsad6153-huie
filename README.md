@@ -131,6 +131,44 @@ AI use: drafted with Claude from my fetched data and notes; verified and revised
 
 See `docs/data_dictionary.md` for what the data means.
 
+### Run instructions (Milestone 3: sync)
+
+With `.venv` active and `DATABASE_URL`, `APP_DATABASE_URL`, and `MOUSER_API_KEY` in `.env`:
+
+```
+python ingest/sync.py                 # manual sync: refresh known parts, search for new ones
+python scripts/status.py              # last successful sync, its age, and 7-day totals
+```
+
+- `sync.py` re-checks every part already in the database (10 part numbers per call) and runs the
+  12 keyword searches for new parts. It makes about 200 calls and takes 8 to 12 minutes.
+  It changes a row only when a value really changed, and it records every run in `sync_runs`.
+- Options: `--trigger schedule|manual` (default `manual`), `--no-keywords` (known parts only),
+  `--max-calls N` (default 250), `--dry-run` (fetch and compare, then roll back; writes nothing).
+- Exit code 0 means `success` or `partial` (a partial run prints its reasons); 1 means `failed`.
+- Only one sync runs at a time. A second one records a `failed` row ("another sync is running")
+  and exits without calling Mouser.
+- `status.py` uses the read-only role. Exit code 1 means the last successful sync is older than 13 hours.
+- GitHub Actions runs the same sync on a schedule (`.github/workflows/sync.yml`), using the
+  `DATABASE_URL` and `MOUSER_API_KEY` repository secrets. Run it by hand from the Actions tab
+  with **Run workflow**.
+
+### Sync schedule (Milestone 3)
+
+The sync runs every 12 hours, at 11:17 and 23:17 UTC (5:17 am and 5:17 pm US Central).
+
+- **The data changes faster than I expected.** Between my Oct 28 fetch and the first sync on Nov 14,
+  561 of 1,462 parts (38%) changed stock, lead time, or price, and 149 new parts appeared. Between two
+  syncs 17 hours apart, 124 parts changed and 28 were new. Two runs 11 minutes apart changed nothing,
+  so more often than a few times a day would mostly re-read the same values.
+- **My decisions need same-day data, not up-to-the-minute data.** [ANTHONY: confirm] I build pick lists
+  anywhere from several times a day to once a week, and a quote or order still takes an email round trip,
+  so stock that is at most 12 hours old is good enough to choose a vendor. [ANTHONY: confirm]
+- **It fits the API limit with room to spare.** Each run makes about 200 calls, so two runs use about 400
+  of Mouser's 1,000 calls a day and leave room for manual runs and testing.
+- **The times bracket my workday** [ANTHONY: confirm], so the data is fresh when I start and before I finish.
+- `scripts/status.py` flags the data as stale after 13 hours (12 plus an hour for GitHub's schedule delays).
+
 ## Credits
 
 <!-- Your data API's required attribution, plus any open-source code or samples you used. -->

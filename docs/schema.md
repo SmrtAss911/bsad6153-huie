@@ -119,3 +119,35 @@ Claude recommended leaving them out of the columns this week and searching descr
 The result is 63 of 257 power strips with an amp rating and 51 of 301 rack products with a width. The column is named `rated_amps` and not `circuit_amps` because descriptions usually give the unit's rating, often its input, and not the per-circuit breaker rating that caused my PDU mistake. The original text stays in `parts.raw`.
 
 Confirmed: this matches what I decided.
+
+## Access roles
+
+| Role | Used by | Can do |
+|---|---|---|
+| `postgres` (owner, `DATABASE_URL`) | `ingest/load.py`, `ingest/sync.py`, GitHub Actions | Everything. Never used by the website or chatbot. |
+| `app_reader` (`APP_DATABASE_URL`) | Website, chatbot, `scripts/status.py`, `evals/check_reference.py` | `SELECT` only, on `manufacturers`, `search_keywords`, `parts`, `price_breaks`, `part_attributes`, `part_on_order`, `part_search_hits`, and `sync_runs` once it exists |
+
+The grants are in `db/roles.sql`. The role is created there without a password, and the password was set separately in the Supabase SQL editor. It is not stored in this repository.
+
+### Evidence (2026-11-14)
+
+Connection check:
+
+```
+> python scripts/check_db.py --app
+[ok] Connected using APP_DATABASE_URL
+     Database user: app_reader
+     Server: PostgreSQL 17.11 on x86_64-pc-linux-gnu
+```
+
+Read and write test. Each statement runs in its own transaction, which is always rolled back, and the DELETE matches only a fake part number:
+
+```
+> python scripts/test_app_reader.py
+Connected as: app_reader
+  SELECT  OK      1462
+  INSERT  DENIED  InsufficientPrivilege: permission denied for table parts
+  DELETE  DENIED  InsufficientPrivilege: permission denied for table parts
+```
+
+The read-only role can read the data but cannot change it.
