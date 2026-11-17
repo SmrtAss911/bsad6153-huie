@@ -119,6 +119,137 @@ The fairness check here would go vendor to vendor. If it was purely decided by p
 - Drop parts whose category doesn't match the request, and check size (such as 1U) before recommending.
 - Say that stock and prices are as of the fetch time.
 
+## Database checks (Milestone 3)
+
+- **When:** 2026-11-16 07:40 UTC, after 7 sync runs (the last one by GitHub Actions).
+- **How:** `db/quality_checks.sql` (Q1–Q24), run with `scripts/run_quality_checks.py` as `app_reader` in a
+  read-only session. SELECT only.
+- **Rows (Q1):** 1,639 parts, 56 manufacturers, 8,551 price breaks, 2,249 attributes, 156 on-order rows,
+  12 keywords, 14,504 search hits, 7 sync runs.
+
+### What passed
+
+| Check | Query | Result |
+|---|---|---|
+| Duplicates on every natural key | Q5 | 0 |
+| Duplicates differing only in case or spaces | Q6 | 0 |
+| Same manufacturer part number listed twice for one manufacturer | Q7 | 0 groups |
+| Unit price rising at a larger quantity | Q10 | 0 |
+| On-order dates already past | Q12 | 0 |
+| Orphan rows (6 foreign keys) | Q13 | 0 |
+| Parts with no search hit, manufacturers with no parts, keywords with no hits | Q14 | 0 |
+
+The constraints in `db/schema.sql` enforce the Q5 and Q13 results, so these confirm the constraints are in place
+rather than finding anything new.
+
+### Findings
+
+1. **Zero stock: 488 of 1,639 parts (29.8%)** (Q3). These are exactly the 488 parts with no
+   `availability_text` (Q2, Q19: 488 in both, 0 in only one), so the load handles all three "no stock"
+   forms the same way.
+2. **Lifecycle unknown: 885 parts (54.0%)** (Q3), about the same as Oct 28 (54.4%).
+3. **Amps and rack width are mostly null** (Q2): `rated_amps` 95.8%, `rack_width_in` 96.6%. About half the parts
+   (868, 53.0%) are Ethernet cables, fiber assemblies, power cords and transceivers (Q21), which have no rack
+   width, and whose current rating `rated_amps` doesn't track. The gaps are also inside the categories that need
+   them: only 69 of 281 power outlet strips have `rated_amps`, and only 56 of 316 rack and cabinet parts have
+   `rack_width_in` (Q21). A null means the description doesn't say, so these columns can narrow PDUs and racks
+   but can't rule a part out.
+4. **2 parts have no price** (Q4). They have no `price_breaks` rows, so they can't be read as $0.
+5. **Out of range** (Q9): 1 part has a 435-day lead time, 5 parts carry a 120% tariff notice (all exactly
+   120%, Q20; 4 on Oct 28), and 3 parts have a minimum order over 1,000. These look like real Mouser values,
+   not load errors: they pass the schema checks and the 120% tariffs were already in the Oct 28 raw data.
+   I have not yet hand-checked the lead time and minimum orders on mouser.com.
+6. **Freshness** (Q15, Q22). The database can answer two freshness questions but not a third:
+   - **Last changed** (Q15): `data_as_of` moves only when a part's values, price breaks, attributes or
+     on-order rows change (`UPSERT_PARTS` and `TOUCH_PARTS` in `ingest/sync.py`). 162 parts changed in the
+     last day, 724 in 1–7 days and 753 in 7–30 days. An old `data_as_of` means "unchanged since then",
+     not "not checked since then".
+   - **Keyword visibility** (Q22): in the latest keyword search (run 7, 2026-11-16 01:29 UTC), 1,455 of
+     1,639 parts appeared and 184 did not; the oldest last hit is the Oct 28 load. This measures whether a
+     part still shows up in the first 3 pages of the 12 keywords, not whether Mouser still sells it:
+     results shift between runs, and a part found only by the part-number refresh pass gets no hit.
+   - **Part no longer found: not recorded.** Every run also looks up each known part number. When one
+     returns nothing, `sync.py` only logs a count (`watched missing` in the run's console or Actions log)
+     and fails the run if more than half are missing. The part numbers are not stored, so the database
+     cannot list parts Mouser no longer returns. **Known limitation.** Not adding `last_found_at` in this
+     milestone. Planned change: have the refresh pass record when each part was last found, so a later
+     milestone can flag parts Mouser no longer returns.
+
+### Fairness check (Milestone 3)
+
+- **Tariffs** (Q16): 446 of 1,639 parts (27.2%) carry a tariff notice (Oct 28: 407 of 1,456, 28.0%).
+- **By manufacturer** (Q17, 10 largest):
+
+| Manufacturer | Parts | Tariffed | In stock |
+|---|---|---|---|
+| StarTech | 436 | 0% | 83% |
+| Tripp Lite | 288 | 97% | 55% |
+| Hammond Manufacturing | 225 | 0% | 61% |
+| L-Com | 197 | 0% | 72% |
+| Amphenol ProLabs | 87 | 0% | 93% |
+| APC by Schneider Electric | 67 | 43% | 24% |
+| Panduit | 47 | 0% | 28% |
+| Stewart Connector | 28 | 96% | 93% |
+| Bud Industries | 26 | 0% | 65% |
+| Eaton | 21 | 62% | 33% |
+
+- **By country** (Q18): Taiwan 48% tariffed, Vietnam 34%, China 26%, Canada 1%, United States 0%;
+  "Not available" 56%.
+- **Fact:** an "in stock only" filter keeps 83% of StarTech parts but only 24% of APC and 28% of Panduit.
+- **Judgment:** filtering on stock tilts recommendations toward StarTech (83% in stock) and away from APC (24%),
+  Panduit (28%) and Eaton (33%). The effect is in racks and cabinets, not PDUs: an in-stock filter keeps 4 of
+  their 59 rack accessories and 0 of their 10 cabinets, but 20 of their 33 outlet strips (Q23). The data barely
+  covers my baseline problems: it has 1 APC cabinet (out of stock), and no parts from Vertiv, the PDU brand in
+  my baseline log, or its Geist, Liebert and Avocent brands (no manufacturer name or description mentions them;
+  Q23, Q24). So for my decisions the bigger fairness risk is coverage, not the stock filter: this data barely
+  covers the exact-model cabinets and PDUs I standardize on, so the tool must say when a required model isn't
+  in the data instead of offering an in-stock lookalike. A ranking on listed price alone still favors Tripp
+  Lite, whose parts carry a tariff notice on 97% of them, so their listed prices understate the US cost. The
+  agent should show out-of-stock exact matches with their lead time rather than hide them.
+
+## Freshness, ownership and alerting (Milestone 3)
+
+Lineage (API to `sync.py` to each table) is in [data_dictionary.md](data_dictionary.md#lineage-milestone-3).
+Runs 8–11, cited below, came after the 07:40 UTC database checks above.
+
+### Worst-case freshness
+
+- **Normal:** a scheduled sync at 11:41 and 23:41 UTC. A run takes about 8.5 minutes (runs 7, 9 and 11).
+  If every run succeeds, the data is at most about 12 hours old plus GitHub's start delay.
+- **GitHub's delay can exceed the 1 hour of slack** in `scripts/status.py`: the only scheduled run so far
+  (run 11) started at 21:06 UTC, nowhere near the old :17 times. [ANTHONY: confirm from the Actions tab]
+- **One failed run:** nothing is written (runs 8 and 10), and the next try is 12 hours later, so the data
+  is about 24 hours old.
+- **No upper bound:** if runs keep failing or the schedule doesn't fire, the data keeps aging, and nothing
+  says so until someone runs `scripts/status.py`. GitHub also disables scheduled workflows in a public repo
+  after 60 days without repository activity. [ANTHONY: verify]
+- **Per part:** a part in a skipped batch, or one Mouser no longer returns, keeps its last values with no
+  flag (Finding 6), so one part's worst case has no bound even when every run succeeds.
+
+### Ownership
+
+| What | Owner |
+|---|---|
+| Source data and its terms | Mouser Electronics |
+| Sync code, schema, database, GitHub secrets, schedule | Anthony Huie |
+
+[ANTHONY: confirm, and name a backup if anyone else should be able to fix a broken sync]
+
+### Alerting
+
+- **Failed run:** `sync.py` exits 1, so the Actions job fails and GitHub sends a failed-workflow email.
+  [ANTHONY: verify who receives it and that Actions notifications are on] A run on my PC alerts no one.
+- **Partial run:** exits 0, so the Actions job shows green. The reasons are only in `sync_runs.error_message`
+  and the log. Not alerted.
+- **Run that can't connect or never starts:** no `sync_runs` row (Actions run #1, `docs/sync_tests.md`),
+  and if the schedule doesn't fire, no Actions run at all. Only `scripts/status.py` notices, as stale data
+  after 13 hours, and only when someone runs it.
+- **Mouser format change:** new field names print a WARNING in the log (run 9: `REACH-SVHC`,
+  `RestrictionMessage`, `SalesMaximumOrderQty`). Not alerted.
+- **Gap:** nothing runs `scripts/status.py` on a schedule. [ANTHONY: decide whether to add a scheduled
+  freshness check in a later milestone]
+- **Change log:** see [data_dictionary.md](data_dictionary.md#change-log).
+
 ---
 
 Drafted with Claude from the saved Mouser data; verified by Anthony Huie.

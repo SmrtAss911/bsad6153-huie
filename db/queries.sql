@@ -3,7 +3,7 @@
 -- Notes for reading these results:
 --   * rated_amps is the unit's stated rating, often its input, not its per-circuit breaker rating.
 --   * A null rated_amps or rack_width_in means the description does not state it clearly.
---   * lead_time_days = 0 appears on 482 of 1,462 parts, including 290 of 457 out-of-stock parts.
+--   * lead_time_days = 0 appears on 523 of 1,639 parts, including 324 of 480 out-of-stock parts (Nov 17).
 --     It most likely means Mouser gave no figure, so these queries treat it as "not stated".
 --   * Stock and prices are as of each part's data_as_of. They are not live.
 
@@ -91,7 +91,8 @@ order by cheapest_with_tariff;
 
 -- Q6 (optics, exact part numbers): Which SFP part numbers appeared in the last 7 days,
 -- with their stock and lead time?
--- Interpretation: 50 exact part numbers to quote instead of a generic description; this returns nothing after about Nov 16 without a new fetch.
+-- Interpretation: exact part numbers to quote instead of a generic description (50 when first written,
+-- 150 on 2026-11-16 in the GQ06 reference check); it returns nothing if no keyword sync has run in 7 days.
 select *
 from (
     select distinct on (p.part_id)

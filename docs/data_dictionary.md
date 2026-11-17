@@ -7,7 +7,7 @@
 | Name | Mouser Electronics Search API (primary source) |
 | Base URL | `https://api.mouser.com` |
 | Endpoint used | `POST /api/v1/search/keyword` (body: `SearchByKeywordRequest` with `keyword`, `records`, `startingRecord`) |
-| Also available, not used | `POST /api/v1/search/partnumber` (up to 10 Mouser part numbers per call, pipe-separated; no paging) |
+| Also used (Milestone 3) | `POST /api/v1/search/partnumber` (up to 10 Mouser part numbers per call, pipe-separated; no paging). `ingest/sync.py` uses it to refresh every part already in the database (the watch list). |
 | Auth | API key passed as the `apiKey` query parameter on every call; stored only in `.env` as `MOUSER_API_KEY` |
 | Limits | Up to 50 results per call, 30 calls per minute, 1,000 calls per day ([api-search page](https://www.mouser.com/en/api-search/)) |
 | Docs | [Search API page](https://www.mouser.com/en/api-search/), [Swagger spec](https://api.mouser.com/api/docs/v1), [Swagger UI](https://api.mouser.com/api/docs/ui/index) |
@@ -104,6 +104,54 @@ Counts are from run 1 (1,655 part records). "Null/empty" means missing, JSON nul
 10. **Tariffs aren't in the price.** 407 of 1,456 unique parts (28%) have a `SurchargeMessages` notice such as "A tariff of 38%
     may be applied if shipping to the United..." (full text not checked). The rates range from 7% to 120% (most common: 38% on 134 parts,
     8% on 125, 11% on 64). `PriceBreaks` doesn't include them.
+
+## Lineage (Milestone 3)
+
+    Mouser Search API
+     ├─ POST /api/v1/search/partnumber   watch list: every part already in parts, 10 per call
+     └─ POST /api/v1/search/keyword      12 keywords (ingest/fetch.py), up to 3 pages of 50
+            │  ingest/sources/mouser.py: error handling; never logs the key
+            ▼
+     ingest/sync.py: validate each part (check_part), stage in temp tables, then one transaction
+            ▼
+     manufacturers, search_keywords, parts, price_breaks, part_attributes, part_on_order, part_search_hits
+     sync_runs: one row per run, written after the transaction, whatever the outcome
+
+| Table | Filled from | Written by (`ingest/sync.py`) | When a row changes |
+|---|---|---|---|
+| `manufacturers` | `Manufacturer` | `UPSERT_MANUFACTURERS` | New brand name only |
+| `search_keywords` | `KEYWORDS` in `ingest/fetch.py` | `UPSERT_KEYWORD` | New keyword only |
+| `parts` | One row per `MouserPartNumber` (columns below) | `UPSERT_PARTS`, `TOUCH_PARTS` | Inserted when new; updated only when a compared column differs, or when its child rows change |
+| `price_breaks` | `PriceBreaks` | `UPSERT_BREAKS`, `DELETE_STALE_BREAKS` | Made to match what Mouser sent, for parts fetched this run |
+| `part_attributes` | `ProductAttributes` | `UPSERT_ATTRS`, `DELETE_STALE_ATTRS` | Same |
+| `part_on_order` | `AvailabilityOnOrder` (first quantity per date) | `UPSERT_ORDERS`, `DELETE_STALE_ORDERS` | Same |
+| `part_search_hits` | Keyword results only | `INSERT_HITS` | One row per keyword, part and run; watch-list results add none |
+| `sync_runs` | The run itself | `INSERT_RUN` | Once per run |
+
+| `parts` column | From | Rule (`part_row` in `ingest/load.py`) |
+|---|---|---|
+| `mouser_part_number`, `manufacturer_part_number`, `description`, `category` | Same-named fields | As sent |
+| `product_url` | `ProductDetailUrl` | As sent |
+| `manufacturer_id` | `Manufacturer` | Looked up by name in `manufacturers` |
+| `availability_text` | `Availability` | `"None"` or empty becomes null |
+| `in_stock_qty` | `AvailabilityInStock` | Digits only; missing becomes 0 |
+| `lead_time_days` | `LeadTime` | `"17 Days"` becomes 17; any other form: `sync.py` rejects the part, `load.py` stops the load |
+| `lifecycle_status` | `LifecycleStatus` | Null becomes `"Unknown"` |
+| `min_order_qty`, `order_multiple` | `Min`, `Mult` | Digits only |
+| `tariff_pct` | `SurchargeMessages`, code `TARIFF_US` | The percentage in the message; no notice is null |
+| `country_of_origin` | `TradeCompliance`, "Country of Origin" | `"Not available"` becomes null |
+| `rated_amps` | `Description`, Power Outlet Strips only | One stated amp value; none or two different values is null |
+| `rack_width_in` | `Description`, rack categories only | One stated 19 or 23 that isn't described as a depth; otherwise null |
+| `data_as_of` | Time of the API call | Moves only when the row or its child rows change |
+| `raw` | The whole part object | As sent |
+
+## Change log
+
+Changes to the source, schema, sync or schedule that affect what the data means.
+
+| Date | Change | Why | Effect on the data |
+|---|---|---|---|
+| [ANTHONY: fill in] | | | |
 
 ## Ethics check
 

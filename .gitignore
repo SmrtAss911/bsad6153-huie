@@ -11,9 +11,13 @@ venv/
 # Raw API downloads can be large; commit a small sample to data/sample/ instead
 data/raw/
 
+# Golden question answers hold Mouser part data (their terms restrict storing it); summaries go in docs/
+evals/results/*.json
+
 # Local-only AI review log draft (pasted into the PR description, not committed)
 docs/ai_review_log_draft.md
 docs/ai_review_log_draft_m2.md
+docs/ai_review_log_draft_m3.md
 
 # Python and editor clutter
 __pycache__/

@@ -155,7 +155,7 @@ python scripts/status.py              # last successful sync, its age, and 7-day
 
 ### Sync schedule (Milestone 3)
 
-The sync runs every 12 hours, at 11:17 and 23:17 UTC (5:17 am and 5:17 pm US Central).
+The sync runs every 12 hours, at 11:41 and 23:41 UTC (5:41 am and 5:41 pm US Central).
 
 - **The data changes faster than I expected.** Between my Oct 28 fetch and the first sync on Nov 14,
   561 of 1,462 parts (38%) changed stock, lead time, or price, and 149 new parts appeared. Between two
