@@ -2,7 +2,7 @@ name: Sync Mouser data
 
 on:
   schedule:
-    - cron: "17 11,23 * * *"   # 11:17 and 23:17 UTC = 5:17 am and 5:17 pm US Central (standard time)
+    - cron: "41 11,23 * * *"   # 11:41 and 23:41 UTC = 5:41 am and 5:41 pm US Central (standard time)
   workflow_dispatch:            # the "Run workflow" button
 
 permissions:
