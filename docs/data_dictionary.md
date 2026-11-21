@@ -149,9 +149,9 @@ Counts are from run 1 (1,655 part records). "Null/empty" means missing, JSON nul
 
 Changes to the source, schema, sync or schedule that affect what the data means.
 
-| Date | Change | Why | Effect on the data |
+| Date | File | Change and why | By |
 |---|---|---|---|
-| [ANTHONY: fill in] | | | |
+| 2026-11-16 | sync.yml | Moved the sync schedule from :17 to :41 (5:41 am/pm Central) so GitHub would pick it up | Anthony Huie |
 
 ## Ethics check
 

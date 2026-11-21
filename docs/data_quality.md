@@ -216,13 +216,14 @@ Runs 8–11, cited below, came after the 07:40 UTC database checks above.
 
 - **Normal:** a scheduled sync at 11:41 and 23:41 UTC. A run takes about 8.5 minutes (runs 7, 9 and 11).
   If every run succeeds, the data is at most about 12 hours old plus GitHub's start delay.
-- **GitHub's delay can exceed the 1 hour of slack** in `scripts/status.py`: the only scheduled run so far
-  (run 11) started at 21:06 UTC, nowhere near the old :17 times. [ANTHONY: confirm from the Actions tab]
+- **GitHub's delay can exceed the 1 hour of slack** in `scripts/status.py`: scheduled Actions run #3
+  (run 11) started 2026-11-16 21:06 UTC; it was the delayed 11:17 trigger, about 9 h 49 min late.
+  My decision: record late runs and leave them, because my decisions only need same-day data.
 - **One failed run:** nothing is written (runs 8 and 10), and the next try is 12 hours later, so the data
   is about 24 hours old.
 - **No upper bound:** if runs keep failing or the schedule doesn't fire, the data keeps aging, and nothing
   says so until someone runs `scripts/status.py`. GitHub also disables scheduled workflows in a public repo
-  after 60 days without repository activity. [ANTHONY: verify]
+  after 60 days without repository activity. I will keep committing during the course.
 - **Per part:** a part in a skipped batch, or one Mouser no longer returns, keeps its last values with no
   flag (Finding 6), so one part's worst case has no bound even when every run succeeds.
 
@@ -233,12 +234,13 @@ Runs 8–11, cited below, came after the 07:40 UTC database checks above.
 | Source data and its terms | Mouser Electronics |
 | Sync code, schema, database, GitHub secrets, schedule | Anthony Huie |
 
-[ANTHONY: confirm, and name a backup if anyone else should be able to fix a broken sync]
+Just me, no backup.
 
 ### Alerting
 
 - **Failed run:** `sync.py` exits 1, so the Actions job fails and GitHub sends a failed-workflow email.
-  [ANTHONY: verify who receives it and that Actions notifications are on] A run on my PC alerts no one.
+  The failure emails come to me; I have not checked the Actions notification setting yet. A run on my
+  PC alerts no one.
 - **Partial run:** exits 0, so the Actions job shows green. The reasons are only in `sync_runs.error_message`
   and the log. Not alerted.
 - **Run that can't connect or never starts:** no `sync_runs` row (Actions run #1, `docs/sync_tests.md`),
@@ -246,8 +248,9 @@ Runs 8–11, cited below, came after the 07:40 UTC database checks above.
   after 13 hours, and only when someone runs it.
 - **Mouser format change:** new field names print a WARNING in the log (run 9: `REACH-SVHC`,
   `RestrictionMessage`, `SalesMaximumOrderQty`). Not alerted.
-- **Gap:** nothing runs `scripts/status.py` on a schedule. [ANTHONY: decide whether to add a scheduled
-  freshness check in a later milestone]
+- **Freshness check:** every sync run now reports freshness. The last step of
+  `.github/workflows/sync.yml` runs `scripts/status.py` with `if: always()`, so it runs even when the
+  sync step fails.
 - **Change log:** see [data_dictionary.md](data_dictionary.md#change-log).
 
 ---

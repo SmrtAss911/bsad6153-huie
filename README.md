@@ -161,12 +161,12 @@ The sync runs every 12 hours, at 11:41 and 23:41 UTC (5:41 am and 5:41 pm US Cen
   561 of 1,462 parts (38%) changed stock, lead time, or price, and 149 new parts appeared. Between two
   syncs 17 hours apart, 124 parts changed and 28 were new. Two runs 11 minutes apart changed nothing,
   so more often than a few times a day would mostly re-read the same values.
-- **My decisions need same-day data, not up-to-the-minute data.** [ANTHONY: confirm] I build pick lists
+- **My decisions need same-day data, not up-to-the-minute data.** I build pick lists
   anywhere from several times a day to once a week, and a quote or order still takes an email round trip,
-  so stock that is at most 12 hours old is good enough to choose a vendor. [ANTHONY: confirm]
+  so stock that is at most 12 hours old is good enough to choose a vendor.
 - **It fits the API limit with room to spare.** Each run makes about 200 calls, so two runs use about 400
   of Mouser's 1,000 calls a day and leave room for manual runs and testing.
-- **The times bracket my workday** [ANTHONY: confirm], so the data is fresh when I start and before I finish.
+- The morning run gives me fresh data before I start my day; the evening run keeps it on a 12-hour cycle.
 - `scripts/status.py` flags the data as stale after 13 hours (12 plus an hour for GitHub's schedule delays).
 
 ## Credits

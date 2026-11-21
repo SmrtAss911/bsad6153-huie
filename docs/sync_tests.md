@@ -68,7 +68,7 @@ before running it, what happened, and the `sync_runs` row it left. Results come 
   succeeded.
 - **Lesson:** a run that cannot connect leaves no trace in `sync_runs`, so `scripts/status.py`
   shows it only as stale data once the last success is over 13 hours old, not as a failed run.
-  [ANTHONY: confirm, and confirm run #1 used the same connect-for-lock code]
+  Run #1 ran `main` at eb61dad, which has the same connect-for-lock code.
 
 ## Real-world break: network drop during a manual sync (run 10)
 
@@ -96,12 +96,14 @@ before running it, what happened, and the `sync_runs` row it left. Results come 
 
 - **What happened:** the schedule was `17 11,23 * * *` (11:17 and 23:17 UTC).
   - **11:17 UTC:** no run at that time. The only scheduled run that day, run 11, started at 21:06 UTC,
-    about 9 h 49 min late. [ANTHONY: confirm from the Actions tab whether run 11 was the delayed 11:17 run]
+    about 9 h 49 min late. It was Actions run #3 (scheduled), the delayed 11:17 trigger.
   - **23:17 UTC:** no run and no `sync_runs` row (checked 2026-11-17 04:36 UTC).
 - **sync_runs rows:** run 11 only (`success`, `schedule`, 21:06:28 to 21:14:44 UTC). A trigger that never
   fires leaves no row.
 - **What I did:** moved the schedule to `41 11,23 * * *` (commit d7b32d5, 2026-11-17 01:33 UTC) to
-  re-register the cron. The first :41 run is due at 11:41 UTC on Nov 17. [ANTHONY: record whether it ran]
+  re-register the cron. The :41 schedule ran late but ran: Actions run #4 at 2026-11-17 19:59 UTC
+  (about 8 h late) and #5 at 2026-11-18 04:41 UTC (about 5 h late), both success. That makes three
+  scheduled successes within 48 hours.
 - **Lesson:** GitHub's schedule is best effort: a run can start hours late or not at all, and nothing alerts
   on a missed run. Only `scripts/status.py` shows it, as stale data, when someone runs it
   (see `docs/data_quality.md`, Alerting).
