@@ -107,3 +107,54 @@ before running it, what happened, and the `sync_runs` row it left. Results come 
 - **Lesson:** GitHub's schedule is best effort: a run can start hours late or not at all, and nothing alerts
   on a missed run. Only `scripts/status.py` shows it, as stale data, when someone runs it
   (see `docs/data_quality.md`, Alerting).
+
+## Golden check rerun (Nov 21)
+
+- **What I did:** reran the golden reference check (connects with `APP_DATABASE_URL` only) and compared it
+  with the Nov 16 baseline:
+  ```
+  python evals/check_reference.py
+  python evals/check_reference.py --diff evals/results/20261116T081646Z.json evals/results/20261121T202430Z.json
+  ```
+  The result files stay local (`evals/results/*.json` is gitignored because it holds Mouser part data).
+- **Baseline:** 2026-11-16 08:16 UTC (`20261116T081646Z.json`). The last successful sync then finished at
+  01:37 UTC (Actions run #2).
+- **Rerun:** 2026-11-21 20:24 UTC (`20261121T202430Z.json`): 13 queries run, 13 ok and non-empty, 5 skipped
+  (decline by design), exit code 0.
+- **Scheduled Actions runs in between:** ten, all `success`. Every :41 run started late: the 11:41 runs at
+  19:14–19:59 UTC, the 23:41 runs at 04:14–04:41 UTC.
+
+  | Actions run | Started (UTC) | sync_runs run_id | Parts inserted | Parts updated |
+  |---|---|---|---|---|
+  | #3 | 2026-11-16 21:06 | 11 | 0 | 54 |
+  | #4 | 2026-11-17 19:59 | 15 | 18 | 95 |
+  | #5 | 2026-11-18 04:41 | 16 | 0 | 39 |
+  | #6 | 2026-11-18 19:34 | 17 | 6 | 52 |
+  | #7 | 2026-11-19 04:29 | 18 | 0 | 82 |
+  | #8 | 2026-11-19 19:37 | 19 | 22 | 88 |
+  | #9 | 2026-11-20 04:14 | 20 | 0 | 113 |
+  | #10 | 2026-11-20 19:14 | 21 | 6 | 57 |
+  | #11 | 2026-11-21 04:15 | 22 | 0 | 37 |
+  | #12 | 2026-11-21 18:11 | 23 | 12 | 59 |
+
+  Manual runs 8–14 (Tests 1 and 2 above) also fell in this window; they inserted no parts. The scheduled
+  runs inserted 64 parts, which matches GQ16's part count going from 1,639 to 1,703.
+- **Diff result:** 9 of 18 questions changed. GQ05, GQ07, GQ08, GQ09 and the five decline questions were
+  the same.
+
+  | Question | Nov 16 | Nov 21 | Why |
+  |---|---|---|---|
+  | GQ01 in-stock 20 A PDUs | Tripp Lite PDUMV20HV lead time 80 days | 85 days | Same 18 parts; Mouser changed one lead time. |
+  | GQ02 power strips with an amp rating | 20 A: 35 parts; not stated: 212 (117 in stock) | 20 A: 39; not stated: 229 (116 in stock); other shares down 0.1–0.3 points | 21 more power strips: 4 at 20 A, 17 with no rating. |
+  | GQ03 rack widths | Lead time 0 on five L-Com 23" racks, 122 on LC23IN4P42U-S, 0 on StarTech WALLSHELF4U | 80 days on all six L-Com racks, 29 on WALLSHELF4U | Same 18 parts; Mouser changed 7 lead times. |
+  | GQ04 commodity cables | AC cords 160 (125 in stock, 5 of 35 out of stock with an ETA); Ethernet 377 (304, 17 of 73); fiber 176 (174, 0 of 2) | AC cords 168 (129, 10 of 39); Ethernet 403 (343, 4 of 60); fiber 179 (175, 1 of 4) | New parts in all three categories plus stock changes; Ethernet in stock rose by 39. |
+  | GQ06 SFPs seen in the last 7 days | 150 rows | 154 rows: 5 added (StarTech GLCLXSMRGDST, Molex 183702-1000, Amphenol ProLabs FTLF8519P2BNL-C, SFP-GD-BX34-C, SFP-10G-SR-S-C), 1 dropped (Amphenol ProLabs GLC-T-C), 14 stock and 8 lead time changes | The query keeps SFPs the "sfp transceiver" search returned in the last 7 days; that window now holds 5 SFPs it didn't on Nov 16 and no longer holds GLC-T-C. `run_started_at` on all 149 kept rows moved to the 2026-11-21 18:12 run. |
+  | GQ10 25G SFPs | Amphenol ProLabs SFP-10/25G-LR-S-C lead time 0; Coherent FTLF8536P5BCV 80 in stock | Lead time 28; 0 in stock | Same 11 parts; Mouser changed one lead time and one stock level. |
+  | GQ11 price after tariffs | 11%: 68 parts, highest $504.28 ($559.75 with tariff); 32%: 4 parts, lowest $6.40 ($8.45) | 11%: 69 parts, highest $3,126.23 ($3,470.12); 32%: 5 parts, lowest $6.22 ($8.21); 15%, 38% and 8% gained 1, 2 and 2 parts | New Eaton EVMAG332X power strip (first seen 2026-11-17 20:08 UTC, run 15) is the new 11% high. |
+  | GQ12 out-of-stock wait | 488 out of stock; lead time stated 166, not stated 322; average 72 days; 63 with an on-order date | 508; 184, 324; 65 days; 72 | 20 more parts out of stock, and more of them have a stated lead time or an on-order date. |
+  | GQ16 in stock now | 1,151 of 1,639 in stock; last successful sync 2026-11-16 01:37 UTC, 6 h 39 min old | 1,195 of 1,703; 2026-11-21 18:20 UTC, 2 h 4 min old | 64 new parts from the scheduled runs; the sync age is measured from Actions run #12. |
+
+- **Lesson:** no question broke: all 13 queries still run and return rows, and every change I traced is in
+  the part data (new parts, stock and lead time updates, and GQ06's 7-day window). The saved answers are a
+  snapshot, so an exact match between days is not expected. The result files do not record the SQL they
+  ran, so this diff cannot show whether a reference query itself changed.
