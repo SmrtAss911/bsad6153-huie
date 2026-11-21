@@ -23,16 +23,16 @@ Query numbers refer to `db/queries.sql`. Data: Mouser Search API only, as of eac
 | 9 | Is this cabinet a network rack or a server rack? | APC cabinets | No column for it. Only free-text descriptions, and I have not tested how often they say. |
 | 10 | Which SFPs are 25G, or 10/25G auto-sensing? | Optics | Speed appears only in description text and is not parsed. Auto-sensing is not checked. |
 | 11 | What will I actually pay after tariffs? | Commodity cables | Mouser quotes a tariff that "may be applied." The final amount is not in the data. |
-| 12 | How long will an out-of-stock part take to arrive? | Commodity cables | `lead_time_days` is 0 on 290 of 457 out-of-stock parts, which most likely means no figure was given. |
+| 12 | How long will an out-of-stock part take to arrive? | Commodity cables | `lead_time_days` is 0 on 322 of 488 out-of-stock parts (Nov 16), which most likely means no figure was given. Only 63 have an on-order date. |
 
 ## The data cannot answer these
 
 | # | Question | From my baseline log | Why not |
 |---|---|---|---|
-| 13 | What is the amp rating of each circuit or breaker on this PDU? | Vertiv 16 A vs 20 A | Descriptions mostly give the unit's rating, and 194 of 257 power strips give none. Needs the datasheet. |
+| 13 | What is the amp rating of each circuit or breaker on this PDU? | Vertiv 16 A vs 20 A | Descriptions mostly give the unit's rating, and 212 of 281 power strips give none (Nov 16). Needs the datasheet. |
 | 14 | Does this vendor's custom part number match the manufacturer's part? | APC cabinets | The data has only Mouser's and the manufacturer's numbers, not my vendors' numbers. |
 | 15 | Is this part cheaper or sooner at another distributor? | Commodity cables | Only Mouser is loaded. The Digi-Key source is not configured. |
-| 16 | What is in stock right now? | Commodity cables | The data is a snapshot from each part's last fetch. |
+| 16 | What is in stock right now? | Commodity cables | Answered with a caveat since Milestone 3: stock as of the last successful sync, with its age from `sync_runs`. Not live. |
 | 17 | What cable management do people want to use in their datacenters? | Cable management | That is a preference and a standard. It is not catalog data. |
 | 18 | Did the parts arrive correct, install correctly, and avoid rework? | Reflection, value hypothesis | No order, delivery, or installation data. |
 

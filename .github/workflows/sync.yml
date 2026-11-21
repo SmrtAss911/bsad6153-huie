@@ -30,3 +30,8 @@ jobs:
           MOUSER_API_KEY: ${{ secrets.MOUSER_API_KEY }}
           TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
         run: python ingest/sync.py --trigger "$TRIGGER"
+      - name: Freshness check
+        if: always()
+        env:
+          APP_DATABASE_URL: ${{ secrets.APP_DATABASE_URL }}
+        run: python scripts/status.py
